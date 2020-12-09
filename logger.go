@@ -11,6 +11,7 @@ import (
 
 type logLevel int8
 
+// Log level constants
 const (
 	DEBUG logLevel = iota
 	INFO
@@ -41,6 +42,7 @@ func init() {
 	std.setCallerSkip(4)
 }
 
+// SetSeverity Set the log level
 func SetSeverity(level interface{}) {
 	switch level.(type) {
 	case logLevel:
@@ -50,14 +52,17 @@ func SetSeverity(level interface{}) {
 	}
 }
 
+// SetTimeformat Set the time format within log
 func SetTimeformat(timeformat string) {
 	std.timeFormat = timeformat
 }
 
+// GetSeverityName Convert the log level string to constant number value
 func GetSeverityName(level logLevel) string {
 	return severityName[level]
 }
 
+// GetSeverityLevel Get the log level constant number value from level string
 func GetSeverityLevel(levelName string) int8 {
 	for num, name := range severityName {
 		if name == levelName {
@@ -67,6 +72,7 @@ func GetSeverityLevel(levelName string) int8 {
 	return -1
 }
 
+// NewLogger New a instance of logger
 func NewLogger(level logLevel, timeformat string, outflow io.Writer) *loggerT {
 	// Default logger configuration
 	return &loggerT{
@@ -132,23 +138,23 @@ func (l *loggerT) logln(level logLevel, v ...interface{}) {
 	}
 }
 
-func (l *loggerT) DebugPrinf(format string, v ...interface{}) {
+func (l *loggerT) DebugPrintf(format string, v ...interface{}) {
 	l.logf(DEBUG, format, v...)
 }
 
-func (l *loggerT) InfoPrinf(format string, v ...interface{}) {
+func (l *loggerT) InfoPrintf(format string, v ...interface{}) {
 	l.logf(INFO, format, v...)
 }
 
-func (l *loggerT) WarnPrinf(format string, v ...interface{}) {
+func (l *loggerT) WarnPrintf(format string, v ...interface{}) {
 	l.logf(WARN, format, v...)
 }
 
-func (l *loggerT) ErrorPrinf(format string, v ...interface{}) {
+func (l *loggerT) ErrorPrintf(format string, v ...interface{}) {
 	l.logf(ERROR, format, v...)
 }
 
-func (l *loggerT) FatalPrinf(format string, v ...interface{}) {
+func (l *loggerT) FatalPrintf(format string, v ...interface{}) {
 	l.logf(FATAL, format, v...)
 	os.Exit(1)
 }
@@ -174,43 +180,53 @@ func (l *loggerT) FatalPrintln(v ...interface{}) {
 	os.Exit(1)
 }
 
+// DebugPrintf std Debug printf function
 func DebugPrintf(format string, v ...interface{}) {
-	std.DebugPrinf(format, v...)
+	std.DebugPrintf(format, v...)
 }
 
+// InfoPrintf std Info printf function
 func InfoPrintf(format string, v ...interface{}) {
-	std.InfoPrinf(format, v...)
+	std.InfoPrintf(format, v...)
 }
 
+// WarnPrintf std Warn printf function
 func WarnPrintf(format string, v ...interface{}) {
-	std.WarnPrinf(format, v...)
+	std.WarnPrintf(format, v...)
 }
 
+// ErrorPrintf std Error printf function
 func ErrorPrintf(format string, v ...interface{}) {
-	std.ErrorPrinf(format, v...)
+	std.ErrorPrintf(format, v...)
 }
 
+// FatalPrintf std Fatal printf function
 func FatalPrintf(format string, v ...interface{}) {
-	std.FatalPrinf(format, v...)
+	std.FatalPrintf(format, v...)
 	os.Exit(1)
 }
 
+// DebugPrintln std Debug println function
 func DebugPrintln(v ...interface{}) {
 	std.DebugPrintln(v...)
 }
 
+// InfoPrintln std Info println function
 func InfoPrintln(v ...interface{}) {
 	std.InfoPrintln(v...)
 }
 
+// WarnPrintln std Warn println function
 func WarnPrintln(v ...interface{}) {
 	std.WarnPrintln(v...)
 }
 
+// ErrorPrintln std Error println function
 func ErrorPrintln(v ...interface{}) {
 	std.ErrorPrintln(v...)
 }
 
+// FatalPrintln std Fatal println function
 func FatalPrintln(v ...interface{}) {
 	std.FatalPrintln(v...)
 	os.Exit(1)
