@@ -115,19 +115,31 @@ func (l *loggerT) setCallerSkip(skip int) {
 
 func (l *loggerT) logf(level logLevel, format string, v ...interface{}) {
 	if l.level <= level {
-		file, line := l.getCaller()
-		prefix := fmt.Sprintf("file:%s line:%d %s "+"["+severityName[level]+"] ",
-			file, line, time.Now().Format(l.timeFormat))
+		var prefix string
+
+		if level < INFO {
+			file, line := l.getCaller()
+			prefix = fmt.Sprintf("file:%s line:%d %s "+"["+severityName[level]+"] ",
+				file, line, time.Now().Format(l.timeFormat))
+		} else {
+			prefix = fmt.Sprintf("%s ["+severityName[level]+"] ", time.Now().Format(l.timeFormat))
+		}
 		fmt.Printf(prefix+format+"\n", v...)
 	}
 }
 
 func (l *loggerT) logln(level logLevel, v ...interface{}) {
 	if l.level <= level {
+		var prefix string
 		var msg = make([]string, len(v)+1)
-		file, line := l.getCaller()
-		prefix := fmt.Sprintf("file:%s line:%d %s "+"["+severityName[level]+"] ",
-			file, line, time.Now().Format(l.timeFormat))
+
+		if level < INFO {
+			file, line := l.getCaller()
+			prefix = fmt.Sprintf("file:%s line:%d %s "+"["+severityName[level]+"] ",
+				file, line, time.Now().Format(l.timeFormat))
+		} else {
+			prefix = fmt.Sprintf("%s ["+severityName[level]+"] ", time.Now().Format(l.timeFormat))
+		}
 		msg = append(msg, prefix)
 
 		for range v {
