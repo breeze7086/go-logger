@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -10,26 +9,21 @@ func init() {
 }
 
 func Test_DebugPrintln(t *testing.T) {
-	fmt.Println("===== Testing DebugPrintln Start =====")
-	DebugPrintln("This is the testing string")
+	DebugPrintln("This is the DEBUG testing string")
 }
 
 func Test_InfoPrintln(t *testing.T) {
-	fmt.Println("===== Testing InfoPrintln Start =====")
-	InfoPrintln("This is the testing string")
+	InfoPrintln("This is the INFO testing string")
 }
 
 func Test_WarnPrintln(t *testing.T) {
-	fmt.Println("===== Testing WarnPrintln Start =====")
-	WarnPrintln("This is the testing string")
+	WarnPrintln("This is the WARN testing string")
 }
 
 func Test_ErrorPrintln(t *testing.T) {
-	fmt.Println("===== Testing ErrorPrintln Start =====")
-	ErrorPrintln("This is the testing string")
+	ErrorPrintln("This is the ERROR testing string")
 }
 
 func Test_FatalPrintln(t *testing.T) {
-	fmt.Println("===== Testing FatalPrintln Start =====")
-	FatalPrintln("This is the testing string")
+	FatalPrintln("This is the FATALtesting string")
 }
