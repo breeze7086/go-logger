@@ -1,29 +1,43 @@
 package logger
 
 import (
+	"os"
 	"testing"
 )
 
-func init() {
-	SetSeverity(DEBUG)
+func Test_STD_Output(t *testing.T) {
+	std.SetSeverity(DEBUG)
+	DebugPrintln("This is the println DEBUG testing string")
+	InfoPrintln("This is the println INFO testing string")
+	WarnPrintln("This is the println WARN testing string")
+	ErrorPrintln("This is the println ERROR testing string")
+
+	DebugPrintf("This is the printf DEBUG testing string")
+	InfoPrintf("This is the printf INFO testing string")
+	WarnPrintf("This is the printf WARN testing string")
+	ErrorPrintf("This is the printf ERROR testing string")
 }
 
-func Test_DebugPrintln(t *testing.T) {
-	DebugPrintln("This is the DEBUG testing string")
-}
+func Test_File_Output(t *testing.T) {
+	f, err := os.Create("test.log")
+	if err != nil {
+		t.Fatal(err)
+	}
 
-func Test_InfoPrintln(t *testing.T) {
-	InfoPrintln("This is the INFO testing string")
-}
+	defer func() {
+		if err := f.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
-func Test_WarnPrintln(t *testing.T) {
-	WarnPrintln("This is the WARN testing string")
-}
+	l := NewLogger(DEBUG, "2006-01-02 15:04:05", f)
+	l.DebugPrintln("This is the println DEBUG testing string")
+	l.InfoPrintln("This is the println INFO testing string")
+	l.WarnPrintln("This is the println WARN testing string")
+	l.ErrorPrintln("This is the println ERROR testing string")
 
-func Test_ErrorPrintln(t *testing.T) {
-	ErrorPrintln("This is the ERROR testing string")
-}
-
-func Test_FatalPrintln(t *testing.T) {
-	FatalPrintln("This is the FATALtesting string")
+	l.DebugPrintf("This is the printf DEBUG testing string")
+	l.InfoPrintf("This is the printf INFO testing string")
+	l.WarnPrintf("This is the printf WARN testing string")
+	l.ErrorPrintf("This is the printf ERROR testing string")
 }
