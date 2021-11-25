@@ -50,6 +50,7 @@ func SetSeverity(level interface{}) {
 	case int8:
 		std.level = logLevel(level.(int8))
 	}
+	fmt.Printf("Set the log level to %s"+"\n", severityName[level.(logLevel)])
 }
 
 // SetTimeformat Set the time format within log
@@ -99,6 +100,7 @@ func (l *loggerT) SetSeverity(level interface{}) {
 	case int8:
 		l.level = logLevel(level.(int8))
 	}
+	fmt.Printf("Set the log level to %s"+"\n", severityName[level.(logLevel)])
 }
 
 func (l *loggerT) SetOutflow(outflow io.Writer) {
@@ -124,7 +126,11 @@ func (l *loggerT) logf(level logLevel, format string, v ...interface{}) {
 		} else {
 			prefix = fmt.Sprintf("%s ["+severityName[level]+"] ", time.Now().Format(l.timeFormat))
 		}
-		fmt.Printf(prefix+format+"\n", v...)
+		if l.outflow == os.Stdout {
+			fmt.Printf(prefix+format+"\n", v...)
+		} else {
+			_, _ = l.outflow.Write([]byte(prefix + format + "\n"))
+		}
 	}
 }
 
@@ -146,7 +152,11 @@ func (l *loggerT) logln(level logLevel, v ...interface{}) {
 			msg = append(msg, `%v`)
 		}
 		s := fmt.Sprintf(strings.Join(msg, ""), v...)
-		fmt.Println(s)
+		if l.outflow == os.Stdout {
+			fmt.Println(s)
+		} else {
+			_, _ = l.outflow.Write([]byte(s + "\n"))
+		}
 	}
 }
 
