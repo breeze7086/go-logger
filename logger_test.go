@@ -18,6 +18,15 @@ func Test_STD_Output(t *testing.T) {
 	ErrorPrintf("This is the printf ERROR testing string")
 }
 
+func Test_STD_Output_with_mask(t *testing.T) {
+	std.SetSeverity(DEBUG)
+	DebugPrintln("This is the println DEBUG testing string with password: password")
+	DebugPrintf("This is the println DEBUG testing string with password: %s", "password")
+
+	DebugPrintln("This is the println DEBUG testing string with password: " + std.Mask("password"))
+	DebugPrintf("This is the println DEBUG testing string with password: %s", std.Mask("password"))
+}
+
 func Test_File_Output(t *testing.T) {
 	f, err := os.Create("test.log")
 	if err != nil {
