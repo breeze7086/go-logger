@@ -107,6 +107,10 @@ func (l *loggerT) SetOutflow(outflow io.Writer) {
 	l.outflow = outflow
 }
 
+func (l *loggerT) Mask(infoToMask string) string {
+	return "******"
+}
+
 func (l *loggerT) setTimeFormat(timeFormat string) {
 	l.timeFormat = timeFormat
 }
