@@ -62,5 +62,10 @@ file:main.go line:17 2022-03-24 13:27:07 [DEBUG] This is a DEBUG log
 ~~~
 
 # What's next
-1. Support customize log output structure
-2. Support to send logs to a Kafka topic
+| Feature | Status |
+| ------- | ------ |
+| Support to mask sensitive information when do the print out | ✅ |
+| Support customize log output structure | |
+| Support to send logs to a Kafka topic | |
+| Support to send logs to local logging system(syslog, rsyslog) | |
+| Function "Dump" to gracefully print out a struct or a map | |
