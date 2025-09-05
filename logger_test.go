@@ -50,3 +50,18 @@ func Test_File_Output(t *testing.T) {
 	l.WarnPrintf("This is the printf WARN testing string")
 	l.ErrorPrintf("This is the printf ERROR testing string")
 }
+
+func Test_Syslog_Output(t *testing.T) {
+	std.EnableSyslog("syslog_test")
+	std.SetSeverity(DEBUG)
+
+	DebugPrintln("This is the println DEBUG testing string")
+	InfoPrintln("This is the println INFO testing string")
+	WarnPrintln("This is the println WARN testing string")
+	ErrorPrintln("This is the println ERROR testing string")
+
+	DebugPrintf("This is the printf DEBUG testing string")
+	InfoPrintf("This is the printf INFO testing string")
+	WarnPrintf("This is the printf WARN testing string")
+	ErrorPrintf("This is the printf ERROR testing string")
+}
