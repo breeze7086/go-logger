@@ -44,11 +44,11 @@ func init() {
 
 // SetSeverity Set the log level
 func SetSeverity(level interface{}) {
-	switch level.(type) {
+	switch level := level.(type) {
 	case logLevel:
-		std.level = level.(logLevel)
+		std.level = level
 	case int8:
-		std.level = logLevel(level.(int8))
+		std.level = logLevel(level)
 	}
 	fmt.Printf("Set the log level to %s"+"\n", severityName[level.(logLevel)])
 }
@@ -94,11 +94,11 @@ func (l *loggerT) getCaller() (string, int) {
 }
 
 func (l *loggerT) SetSeverity(level interface{}) {
-	switch level.(type) {
+	switch level := level.(type) {
 	case logLevel:
-		l.level = level.(logLevel)
+		l.level = level
 	case int8:
-		l.level = logLevel(level.(int8))
+		l.level = logLevel(level)
 	}
 	fmt.Printf("Set the log level to %s"+"\n", severityName[level.(logLevel)])
 }

@@ -3,6 +3,7 @@ package logger
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 func Test_STD_Output(t *testing.T) {
@@ -25,6 +26,13 @@ func Test_STD_Output_with_mask(t *testing.T) {
 
 	DebugPrintln("This is the println DEBUG testing string with password: " + std.Mask("password"))
 	DebugPrintf("This is the println DEBUG testing string with password: %s", std.Mask("password"))
+}
+
+func Test_STD_Output_with_custom_timeformat(t *testing.T) {
+	std.SetSeverity(DEBUG)
+	DebugPrintln("This is the println DEBUG testing string with default timeformat")
+	std.setTimeFormat(time.RFC1123)
+	DebugPrintln("This is the println DEBUG testing string with RFC1123 timeformat")
 }
 
 func Test_File_Output(t *testing.T) {
