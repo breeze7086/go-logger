@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -44,11 +45,11 @@ func init() {
 
 // SetSeverity Set the log level
 func SetSeverity(level interface{}) {
-	switch level.(type) {
+	switch level := level.(type) {
 	case logLevel:
-		std.level = level.(logLevel)
+		std.level = level
 	case int8:
-		std.level = logLevel(level.(int8))
+		std.level = logLevel(level)
 	}
 	fmt.Printf("Set the log level to %s"+"\n", severityName[level.(logLevel)])
 }
@@ -94,11 +95,11 @@ func (l *loggerT) getCaller() (string, int) {
 }
 
 func (l *loggerT) SetSeverity(level interface{}) {
-	switch level.(type) {
+	switch level := level.(type) {
 	case logLevel:
-		l.level = level.(logLevel)
+		l.level = level
 	case int8:
-		l.level = logLevel(level.(int8))
+		l.level = logLevel(level)
 	}
 	fmt.Printf("Set the log level to %s"+"\n", severityName[level.(logLevel)])
 }
@@ -164,6 +165,15 @@ func (l *loggerT) logln(level logLevel, v ...interface{}) {
 	}
 }
 
+func (l *loggerT) Dump(v interface{}) {
+	b, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		fmt.Printf("Error dump v: %v\n", v)
+		return
+	}
+	fmt.Println(string(b))
+}
+
 func (l *loggerT) DebugPrintf(format string, v ...interface{}) {
 	l.logf(DEBUG, format, v...)
 }
@@ -204,6 +214,16 @@ func (l *loggerT) ErrorPrintln(v ...interface{}) {
 func (l *loggerT) FatalPrintln(v ...interface{}) {
 	l.logln(FATAL, v...)
 	os.Exit(1)
+}
+
+// Dump std Dump function
+func Dump(v interface{}) {
+	b, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		fmt.Printf("Error dump v: %v\n", v)
+		return
+	}
+	fmt.Println(string(b))
 }
 
 // DebugPrintf std Debug printf function

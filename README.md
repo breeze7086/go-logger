@@ -1,5 +1,5 @@
 # go-logger
-This module supposes to be a simple and easy Golang module.
+This module supposes to be a simple and easy Golang logging module.
 
 # Quick Start
 ## Install
@@ -63,9 +63,8 @@ file:main.go line:17 2022-03-24 13:27:07 [DEBUG] This is a DEBUG log
 
 # What's next
 | Feature | Status |
-| ------- | ------ |
+| ------- |---|
 | Support to mask sensitive information when do the print out | ✅ |
-| Support customize log output structure | |
-| Support to send logs to a Kafka topic | |
-| Support to send logs to local logging system(syslog, rsyslog) | |
-| Function "Dump" to gracefully print out a struct or a map | |
+| Support to send logs to a Kafka topic |   |
+| Support to send logs to local logging system(syslog, rsyslog) | ✅ |
+| Function "Dump" to gracefully print out a struct or a map | ✅ |

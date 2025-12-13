@@ -3,6 +3,7 @@ package logger
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 func Test_STD_Output(t *testing.T) {
@@ -27,6 +28,13 @@ func Test_STD_Output_with_mask(t *testing.T) {
 	DebugPrintf("This is the println DEBUG testing string with password: %s", std.Mask("password"))
 }
 
+func Test_STD_Output_with_custom_timeformat(t *testing.T) {
+	std.SetSeverity(DEBUG)
+	DebugPrintln("This is the println DEBUG testing string with default timeformat")
+	std.setTimeFormat(time.RFC1123)
+	DebugPrintln("This is the println DEBUG testing string with RFC1123 timeformat")
+}
+
 func Test_File_Output(t *testing.T) {
 	f, err := os.Create("test.log")
 	if err != nil {
@@ -49,4 +57,37 @@ func Test_File_Output(t *testing.T) {
 	l.InfoPrintf("This is the printf INFO testing string")
 	l.WarnPrintf("This is the printf WARN testing string")
 	l.ErrorPrintf("This is the printf ERROR testing string")
+}
+
+func Test_Syslog_Output(t *testing.T) {
+	std.EnableSyslog("syslog_test")
+	std.SetSeverity(DEBUG)
+
+	DebugPrintln("This is the println DEBUG testing string")
+	InfoPrintln("This is the println INFO testing string")
+	WarnPrintln("This is the println WARN testing string")
+	ErrorPrintln("This is the println ERROR testing string")
+
+	DebugPrintf("This is the printf DEBUG testing string")
+	InfoPrintf("This is the printf INFO testing string")
+	WarnPrintf("This is the printf WARN testing string")
+	ErrorPrintf("This is the printf ERROR testing string")
+}
+
+func Test_Dump(t *testing.T) {
+	type Student struct {
+		Name    string
+		Age     int
+		Hobbies []string
+		Meta    map[string]string
+	}
+
+	p := Student{
+		Name:    "Mayer",
+		Age:     8,
+		Hobbies: []string{"reading", "sport"},
+		Meta:    map[string]string{"gender": "male", "specialty": "go"},
+	}
+
+	Dump(p)
 }
