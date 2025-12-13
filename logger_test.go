@@ -73,3 +73,21 @@ func Test_Syslog_Output(t *testing.T) {
 	WarnPrintf("This is the printf WARN testing string")
 	ErrorPrintf("This is the printf ERROR testing string")
 }
+
+func Test_Dump(t *testing.T) {
+	type Student struct {
+		Name    string
+		Age     int
+		Hobbies []string
+		Meta    map[string]string
+	}
+
+	p := Student{
+		Name:    "Mayer",
+		Age:     8,
+		Hobbies: []string{"reading", "sport"},
+		Meta:    map[string]string{"gender": "male", "specialty": "go"},
+	}
+
+	Dump(p)
+}
