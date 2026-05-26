@@ -112,6 +112,18 @@ func (l *loggerT) Mask(infoToMask string) string {
 	return "******"
 }
 
+func dumpString(v interface{}) string {
+	out, err := json.MarshalIndent(v, "", "  ")
+	if err == nil {
+		return string(out)
+	}
+	return fmt.Sprintf("%#v", v)
+}
+
+func (l *loggerT) Dump(v interface{}) {
+	l.InfoPrintln(dumpString(v))
+}
+
 func (l *loggerT) setTimeFormat(timeFormat string) {
 	l.timeFormat = timeFormat
 }
@@ -165,15 +177,6 @@ func (l *loggerT) logln(level logLevel, v ...interface{}) {
 	}
 }
 
-func (l *loggerT) Dump(v interface{}) {
-	b, err := json.MarshalIndent(v, "", "  ")
-	if err != nil {
-		fmt.Printf("Error dump v: %v\n", v)
-		return
-	}
-	fmt.Println(string(b))
-}
-
 func (l *loggerT) DebugPrintf(format string, v ...interface{}) {
 	l.logf(DEBUG, format, v...)
 }
@@ -214,16 +217,6 @@ func (l *loggerT) ErrorPrintln(v ...interface{}) {
 func (l *loggerT) FatalPrintln(v ...interface{}) {
 	l.logln(FATAL, v...)
 	os.Exit(1)
-}
-
-// Dump std Dump function
-func Dump(v interface{}) {
-	b, err := json.MarshalIndent(v, "", "  ")
-	if err != nil {
-		fmt.Printf("Error dump v: %v\n", v)
-		return
-	}
-	fmt.Println(string(b))
 }
 
 // DebugPrintf std Debug printf function
@@ -276,4 +269,9 @@ func ErrorPrintln(v ...interface{}) {
 func FatalPrintln(v ...interface{}) {
 	std.FatalPrintln(v...)
 	os.Exit(1)
+}
+
+// Dump std function to print structs, maps, slices, and arrays in a readable format.
+func Dump(v interface{}) {
+	std.Dump(v)
 }

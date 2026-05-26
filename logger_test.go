@@ -1,7 +1,9 @@
 package logger
 
 import (
+	"bytes"
 	"os"
+	"strings"
 	"testing"
 	"time"
 )
@@ -59,6 +61,31 @@ func Test_File_Output(t *testing.T) {
 	l.ErrorPrintf("This is the printf ERROR testing string")
 }
 
+func Test_Dump(t *testing.T) {
+	var buf bytes.Buffer
+	l := NewLogger(INFO, "2006-01-02 15:04:05", &buf)
+
+	l.Dump(map[string]interface{}{
+		"name":    "go-logger",
+		"enabled": true,
+	})
+
+	got := buf.String()
+	if !strings.Contains(got, "[INFO]") {
+		t.Fatalf("expected INFO prefix in dump output, got %q", got)
+	}
+	if !strings.Contains(got, `"name": "go-logger"`) {
+		t.Fatalf("expected formatted map in dump output, got %q", got)
+	}
+
+	type config struct {
+		Name string
+	}
+	if got := dumpString(config{Name: "go-logger"}); !strings.Contains(got, `"Name": "go-logger"`) {
+		t.Fatalf("expected formatted struct, got %q", got)
+	}
+}
+
 func Test_Syslog_Output(t *testing.T) {
 	std.EnableSyslog("syslog_test")
 	std.SetSeverity(DEBUG)
@@ -72,22 +99,4 @@ func Test_Syslog_Output(t *testing.T) {
 	InfoPrintf("This is the printf INFO testing string")
 	WarnPrintf("This is the printf WARN testing string")
 	ErrorPrintf("This is the printf ERROR testing string")
-}
-
-func Test_Dump(t *testing.T) {
-	type Student struct {
-		Name    string
-		Age     int
-		Hobbies []string
-		Meta    map[string]string
-	}
-
-	p := Student{
-		Name:    "Mayer",
-		Age:     8,
-		Hobbies: []string{"reading", "sport"},
-		Meta:    map[string]string{"gender": "male", "specialty": "go"},
-	}
-
-	Dump(p)
 }
