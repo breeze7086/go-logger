@@ -9,12 +9,14 @@ var logLevelMap = map[logLevel]syslog.Priority{
 	INFO:  syslog.LOG_INFO,
 	WARN:  syslog.LOG_WARNING,
 	ERROR: syslog.LOG_ERR,
+	FATAL: syslog.LOG_CRIT,
 }
 
 func (l *loggerT) EnableSyslog(appTag string) {
 	writer, err := syslog.Dial("", "", logLevelMap[l.level], appTag)
 	if err != nil {
 		ErrorPrintf("Can't connect to syslog, %v", err)
+		return
 	}
 
 	l.outflow = writer
