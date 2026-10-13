@@ -206,39 +206,6 @@ HTTP CONNECT proxy. It opens the raw connection; the Kafka transport then perfor
 TLS and SASL handshakes. Kafka TCP connections do not automatically use
 `HTTP_PROXY` or `HTTPS_PROXY`.
 
-## Live cluster test
-The opt-in integration test uses mutual TLS to check each bootstrap broker,
-publishes two uniquely tagged records through `InfoPrintf` and `Dump`, and verifies
-their payloads by reading from the partition end offsets captured before writing.
-It uses no consumer group and commits no offsets. Use an existing topic where you
-have permission to write and read test records; the two records remain in that
-topic until its normal retention removes them.
-
-Keep the certificate and private key outside the repository. For example, in
-PowerShell:
-
-~~~powershell
-$env:GO_LOGGER_KAFKA_INTEGRATION = '1'
-$env:GO_LOGGER_KAFKA_BROKERS = 'broker1.example.com:9093,broker2.example.com:9093'
-$env:GO_LOGGER_KAFKA_TOPIC = 'logger-integration-tests'
-$env:GO_LOGGER_KAFKA_CA = 'C:\certs\ca.pem'
-$env:GO_LOGGER_KAFKA_CERT = 'C:\certs\client.cert.pem'
-$env:GO_LOGGER_KAFKA_KEY = 'C:\certs\client.key.pem'
-# Optional HTTP CONNECT proxy, used for every broker connection:
-$env:GO_LOGGER_KAFKA_PROXY = 'http://127.0.0.1:3128'
-go test -run '^TestKafkaLiveCluster$' -v -count=1 -timeout 3m .
-Remove-Item Env:GO_LOGGER_KAFKA_INTEGRATION
-~~~
-
-For an encrypted PKCS#8 private key, also set
-`GO_LOGGER_KAFKA_KEY_PASSWORD_FILE` to an external text file whose first line
-contains the password. The test uses an existing OpenSSL executable to decrypt
-the key in memory. Set `GO_LOGGER_KAFKA_OPENSSL` to its full path if it is not on
-`PATH`. Do not put passwords or decrypted keys in this repository.
-
-Without `GO_LOGGER_KAFKA_INTEGRATION=1`, ordinary `go test ./...` skips the live
-test and does not contact a cluster.
-
 # What's next
 | Feature | Status |
 | ------- |---|
