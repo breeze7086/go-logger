@@ -143,11 +143,7 @@ func (l *loggerT) logf(level logLevel, format string, v ...interface{}) {
 		} else {
 			prefix = fmt.Sprintf("%s ["+severityName[level]+"] ", time.Now().Format(l.timeFormat))
 		}
-		if l.outflow == os.Stdout {
-			fmt.Printf(prefix+format+"\n", v...)
-		} else {
-			_, _ = l.outflow.Write([]byte(prefix + format + "\n"))
-		}
+		_, _ = fmt.Fprintf(l.outflow, "%s%s\n", prefix, fmt.Sprintf(format, v...))
 	}
 }
 
