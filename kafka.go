@@ -26,6 +26,9 @@ type KafkaConfig struct {
 	ClientID string
 	// Timeout limits each publish operation. Zero uses ten seconds.
 	Timeout time.Duration
+	// Dial optionally opens raw broker connections, for example through a proxy.
+	// The transport performs TLS and SASL handshakes after Dial returns.
+	Dial func(context.Context, string, string) (net.Conn, error)
 	// TLS and SASLMechanism enable encrypted and authenticated connections.
 	TLS           *tls.Config
 	SASLMechanism sasl.Mechanism
@@ -93,6 +96,7 @@ func NewKafkaWriter(config KafkaConfig) (*KafkaWriter, error) {
 	}
 
 	transport := &kafka.Transport{
+		Dial:           config.Dial,
 		ClientID:       config.ClientID,
 		DialTimeout:    config.Timeout,
 		MetadataTopics: []string{config.Topic},

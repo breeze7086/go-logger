@@ -2,11 +2,13 @@ package logger
 
 import (
 	"bufio"
+	"context"
 	"errors"
 	"io"
 	"net"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -157,9 +159,17 @@ func receiveKafkaRecord(t *testing.T, records <-chan receivedKafkaRecord) receiv
 
 func TestKafkaProtocolPublishing(t *testing.T) {
 	address, records := startKafkaProtocolBroker(t, "application-logs", 0)
+	var dialCalls int32
 	l := NewLogger(INFO, "2006-01-02 15:04:05", io.Discard)
 	writer, err := l.EnableKafka(KafkaConfig{
 		Brokers: []string{address}, Topic: "application-logs", ClientID: "protocol-test", Timeout: 3 * time.Second,
+		Dial: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			atomic.AddInt32(&dialCalls, 1)
+			if addr != address {
+				t.Errorf("unexpected broker address: %s", addr)
+			}
+			return (&net.Dialer{}).DialContext(ctx, network, addr)
+		},
 		OnError: func(err error) { t.Errorf("Kafka output: %v", err) },
 	})
 	if err != nil {
@@ -175,6 +185,9 @@ func TestKafkaProtocolPublishing(t *testing.T) {
 		if record.topic != "application-logs" || record.clientID != "protocol-test" || record.acks != -1 || !strings.Contains(record.value, want) {
 			t.Fatalf("unexpected Kafka record: %+v, wanted %q", record, want)
 		}
+	}
+	if atomic.LoadInt32(&dialCalls) == 0 {
+		t.Fatal("producer did not use the configured dial function")
 	}
 	select {
 	case record := <-records:
