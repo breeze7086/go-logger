@@ -143,7 +143,7 @@ func main() {
 # What's next
 | Feature | Status |
 | ------- |---|
-| Support to mask sensitive information when do the print out | Done |
+| Support to mask sensitive information when do the print out | ✅ |
 | Support to send logs to a Kafka topic | Planned |
-| Support to send logs to local logging system(syslog, rsyslog) | Done |
-| Function "Dump" to gracefully print out a struct or a map | Done |
+| Support to send logs to local logging system(syslog, rsyslog) | ✅ |
+| Function "Dump" to gracefully print out a struct or a map | ✅ |
