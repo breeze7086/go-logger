@@ -79,31 +79,38 @@ func TestKafkaLiveCluster(t *testing.T) {
 	var partitions []kafka.Partition
 	var clusterID string
 	for _, broker := range brokers {
-		metadata, err := client.Metadata(ctx, &kafka.MetadataRequest{Addr: kafka.TCP(broker), Topics: []string{topic}})
-		if err != nil {
-			t.Fatalf("TLS/Kafka metadata from %s: %v", broker, err)
-		}
-		if clusterID != "" && metadata.ClusterID != clusterID {
-			t.Fatal("bootstrap brokers returned different cluster IDs")
-		}
-		clusterID = metadata.ClusterID
-		if len(metadata.Topics) != 1 || metadata.Topics[0].Name != topic {
-			t.Fatalf("broker %s did not return metadata for %s", broker, topic)
-		}
-		selected := metadata.Topics[0]
-		if selected.Error != nil {
-			t.Fatalf("topic metadata from %s: %v", broker, selected.Error)
-		}
-		if len(selected.Partitions) == 0 {
-			t.Fatalf("topic %s has no partitions", topic)
-		}
-		for _, partition := range selected.Partitions {
-			if partition.Error != nil || partition.Leader.Host == "" {
-				t.Fatalf("partition %d has no usable leader: %v", partition.ID, partition.Error)
+		t.Run(broker, func(t *testing.T) {
+			metadata, err := client.Metadata(ctx, &kafka.MetadataRequest{Addr: kafka.TCP(broker), Topics: []string{topic}})
+			if err != nil {
+				t.Fatalf("TLS/Kafka metadata from %s: %v", broker, err)
 			}
-		}
-		partitions = selected.Partitions
-		t.Logf("TLS/Kafka metadata OK: broker=%s topic=%s partitions=%d", broker, topic, len(partitions))
+			t.Logf("verified TLS/Kafka connection: broker=%s", broker)
+			if clusterID != "" && metadata.ClusterID != clusterID {
+				t.Fatal("bootstrap brokers returned different cluster IDs")
+			}
+			clusterID = metadata.ClusterID
+			if len(metadata.Topics) != 1 || metadata.Topics[0].Name != topic {
+				t.Fatalf("broker %s did not return metadata for %s", broker, topic)
+			}
+			selected := metadata.Topics[0]
+			if selected.Error != nil {
+				t.Fatalf("topic metadata from %s: %v", broker, selected.Error)
+			}
+			if len(selected.Partitions) == 0 {
+				t.Fatalf("topic %s has no partitions", topic)
+			}
+			for _, partition := range selected.Partitions {
+				if partition.Error != nil || partition.Leader.Host == "" {
+					t.Fatalf("partition %d has no usable leader: %v", partition.ID, partition.Error)
+				}
+			}
+			partitions = selected.Partitions
+			t.Logf("TLS/Kafka metadata OK: broker=%s topic=%s partitions=%d", broker, topic, len(partitions))
+		})
+	}
+	// Diagnose every bootstrap broker, then stop before writing if any failed.
+	if t.Failed() {
+		t.FailNow()
 	}
 
 	starts := make(map[int]int64, len(partitions))
